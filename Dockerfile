@@ -1,44 +1,44 @@
-#FROM ubuntu:trusty
-FROM centos:7
+FROM ubuntu:trusty
+#FROM centos:7
 
-#RUN apt update; apt upgrade -y
-RUN yum update -y 
-RUN yum groupinstall -y 'Development Tools'
+RUN apt update; apt upgrade -y
+#RUN yum update -y 
+#RUN yum groupinstall -y 'Development Tools'
 #RUN yum groupinstall -y "Development Libraries" 
-RUN yum install -y  \
-		yum install libxml2-devel gmp-devel \
-		libicu-devel t1lib-devel aspell-devel openssl-devel \
-		bzip2-devel libcurl-devel libjpeg-devel libvpx-devel \
-		libpng-devel freetype-devel readline-devel libtidy-devel \
-		libxslt-devel pcre-devel curl-devel \
-		mysql-devel ncurses-devel gettext-devel net-snmp-devel \
-		libevent-devel libtool-ltdl-devel libc-client-devel postgresql-devel \
-		libXpm libxpm-dev libXpm-devel httpd-devel libldb2-dev \
-		php-ldap php-mcrypt libldb-devel freetds-libs \
-		 httpd-devel libtool-ltdl-devel libxml2-devel \
-		 openssl-devel pcre-devel curl-devel gd-devel mysql-devel libxslt-devel \
+RUN apt-get install -y  \
+		gcc build-essential autoconf automake libtool re2c flex bison\
+		libxml2-dev apache2 apache2-dev libfreetype6-dev\
+		libcurl4-openssl-dev \
+		libjpeg-turbo8-dev libpng-dev \ 
+		libldb-dev libldap2-dev \
+		libmcrypt-dev libreadline-dev \ 
+		#php5-sybase \
+		php5-mssql unixodbc unixodbc-dev freetds-dev freetds-bin tdsodbc \
+		#unixodbc unixodbc-dev unixodbc-bin libodbc1 odbcinst1debian2 tdsodbc php5-odbc \
+		#freetds-bin freetds-common freetds-dev libdbd-freetds libct4 libsybdb5 wget \
         ; 
 	#rm -rf /var/lib/apt/lists/* libXpm-devel 
 
-RUN yum install -y  libXpm-devel libmcrypt 
-
-#RUN ln -s /usr/lib/x86_64-linux-gnu/libXpm.so /usr/lib/ ; \
-#	ln -s /usr/lib/x86_64-linux-gnu/libXpm.a /usr/lib/
-
-RUN yum install epel-release -y
-
-RUN yum install freetds freetds-devel  libmcrypt-devel php-ldap php-common openldap openldap-devel   -y
+RUN mkdir /usr/include/freetype2/freetype; \
+	ln -s /usr/include/freetype2/freetype.h /usr/include/freetype2/freetype/freetype.h
 
 RUN ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so; \
-	ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so; \
-	cp -frp /usr/lib64/libldap* /usr/lib/ ; \
-	ln -s /usr/include/ldap.h /usr/lib/
+	ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so
 
-COPY php-5.3.29.tar.gz /tmp/
+#RUN wget http://ibiblio.org/pub/Linux/ALPHA/freetds/stable/freetds-stable.tgz
+
+#RUN tar zfvx freetds-stable.tgz
+
+#RUN cd freetds-*; ./configure --prefix=/usr/local/freetds --with-tdsver=8.0 --enable-msdblib --enable-dbmfix --with-gnu-ld; make ; make install
+
+#RUN touch /usr/local/freetds/lib/libtds.a; \
+#	touch /usr/local/freetds/include/tds.h
+	
+COPY php.tar.gz /tmp/
 
 WORKDIR /tmp
 
-RUN tar xvf php-5.3.29.tar.gz 
+RUN tar xvf php.tar.gz 
 
 RUN cd php-5.3.29/ && ./configure --with-mssql=/usr/local/freetds \
  	--with-apxs2  --with-zlib-dir --enable-ftp \
